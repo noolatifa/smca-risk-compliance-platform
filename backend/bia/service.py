@@ -3,9 +3,8 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from backend.bia.models import BIA, BIAImpact
-from backend.bia.schemas import BIACreate, StatutBIA
 from backend.referentiel.models import Activite
-
+from backend.bia.schemas import BIAUpdate, BIACreate, StatutBIA
 
 HORIZONS_AUTORISES = {1, 4, 8, 24, 72}
 
@@ -137,7 +136,69 @@ def creer_bia(
 
     return bia
 
+def modifier_bia(
+    db: Session,
+    bia_id: int,
+    data: BIAUpdate,
+) -> BIA:
+    bia = obtenir_bia(db, bia_id)
 
+    valeurs = data.model_dump(
+        exclude_unset=True,
+        exclude={"impacts"},
+    )
+
+    mtpd = valeurs.get("mtpd_heures", bia.mtpd_heures)
+    rto = valeurs.get("rto_heures", bia.rto_heures)
+
+    if mtpd is not None and rto is not None and rto >= mtpd:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Le RTO doit être strictement inférieur à la MTPD.",
+        )
+
+    for nom_champ, valeur in valeurs.items():
+        setattr(bia, nom_champ, valeur)
+
+    if data.impacts is not None:
+        horizons = [
+            impact.horizon_heures
+            for impact in data.impacts
+        ]
+
+        if not set(horizons).issubset(HORIZONS_AUTORISES):
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=(
+                    "Les horizons autorisés sont : "
+                    "1, 4, 8, 24 et 72 heures."
+                ),
+            )
+
+        if len(horizons) != len(set(horizons)):
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="Un même horizon ne peut apparaître qu'une seule fois.",
+            )
+
+        bia.impacts.clear()
+
+        bia.impacts.extend(
+            BIAImpact(
+                horizon_heures=impact.horizon_heures,
+                clients=impact.clients,
+                operations=impact.operations,
+                finances=impact.finances,
+                engagements=impact.engagements,
+                reputation=impact.reputation,
+            )
+            for impact in data.impacts
+        )
+
+    db.commit()
+    db.refresh(bia)
+
+    return bia
 
 def obtenir_bia(
     db: Session,

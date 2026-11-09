@@ -26,11 +26,15 @@ def test_creation_bia_complete(client):
             "sites_concernes": "Agences Tunis et Ariana",
             "periode_pointe": "Fin de mois",
             "mtpd_heures": 8,
-            "justification_mtpd": "Au-delà de 8 heures, les impacts deviennent inacceptables.",
+            "justification_mtpd": (
+                "Au-delà de 8 heures, les impacts deviennent inacceptables."
+            ),
             "rto_heures": 4,
             "capacite_minimale_pct": 50,
             "rpo_heures": 1,
-            "justification_rpo": "Les transactions confirmées doivent être récupérables.",
+            "justification_rpo": (
+                "Les transactions confirmées doivent être récupérables."
+            ),
             "statut": "brouillon",
             "impacts": [
                 {
@@ -54,3 +58,40 @@ def test_creation_bia_complete(client):
     assert resultat["rto_heures"] == 4
     assert resultat["statut"] == "brouillon"
     assert len(resultat["impacts"]) == 1
+
+
+def test_modification_bia(client):
+    activite = creer_activite(client)
+
+    creation = client.post(
+        f"{API}/bia",
+        json={
+            "activite_id": activite["id"],
+            "responsable": "Responsable initial",
+            "mtpd_heures": 8,
+            "rto_heures": 4,
+            "capacite_minimale_pct": 50,
+            "statut": "brouillon",
+        },
+    )
+
+    assert creation.status_code == 201
+
+    bia = creation.json()
+
+    modification = client.put(
+        f"{API}/bia/{bia['id']}",
+        json={
+            "responsable": "Nouveau responsable",
+            "rto_heures": 2,
+            "capacite_minimale_pct": 70,
+        },
+    )
+
+    assert modification.status_code == 200
+
+    resultat = modification.json()
+
+    assert resultat["responsable"] == "Nouveau responsable"
+    assert resultat["rto_heures"] == 2
+    assert resultat["capacite_minimale_pct"] == 70

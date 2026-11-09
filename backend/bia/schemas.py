@@ -114,3 +114,56 @@ class BIARead(BaseModel):
     impacts: list[BIAImpactRead] = Field(
         default_factory=list,
     )
+    
+    
+    
+    
+class BIAUpdate(BaseModel):
+    model_config = ConfigDict(
+        str_strip_whitespace=True,
+        extra="forbid",
+    )
+
+    responsable: str | None = Field(
+        default=None,
+        max_length=150,
+    )
+
+    heures_fonctionnement: str | None = Field(
+        default=None,
+        max_length=100,
+    )
+
+    sites_concernes: str | None = None
+
+    periode_pointe: str | None = Field(
+        default=None,
+        max_length=150,
+    )
+
+    mtpd_heures: float | None = Field(
+        default=None,
+        gt=0,
+    )
+
+    justification_mtpd: str | None = None
+
+    rto_heures: float | None = Field(
+        default=None,
+        gt=0,
+    )
+
+    capacite_minimale_pct: int | None = Field(
+        default=None,
+        ge=1,
+        le=100,
+    )
+
+    rpo_heures: float | None = Field(
+        default=None,
+        ge=0,
+    )
+
+    justification_rpo: str | None = None
+
+    impacts: list[BIAImpactCreate] | None = None
