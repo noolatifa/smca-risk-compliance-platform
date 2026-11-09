@@ -136,3 +136,27 @@ def creer_bia(
     db.refresh(bia)
 
     return bia
+
+
+
+def obtenir_bia(
+    db: Session,
+    bia_id: int,
+) -> BIA:
+    bia = db.get(BIA, bia_id)
+
+    if bia is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="BIA introuvable.",
+        )
+
+    return bia
+
+
+def lister_bias(
+    db: Session,
+) -> list[BIA]:
+    requete = select(BIA).order_by(BIA.id)
+
+    return list(db.scalars(requete))

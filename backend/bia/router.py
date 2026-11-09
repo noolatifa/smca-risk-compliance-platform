@@ -22,3 +22,25 @@ def creer_bia(
     db: Session = Depends(get_db),
 ):
     return service.creer_bia(db, data)
+
+@router.get(
+    "",
+    response_model=list[BIARead],
+)
+def lister_bias(
+    db: Session = Depends(get_db),
+):
+    return service.lister_bias(db)
+
+
+
+@router.get(
+    "/{bia_id}",
+    response_model=BIARead,
+)
+def obtenir_bia(
+    bia_id: int,
+    db: Session = Depends(get_db),
+):
+    return service.obtenir_bia(db, bia_id)
+
