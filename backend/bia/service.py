@@ -84,6 +84,42 @@ def _verifier_coherence(
         )
 
 
+def _verifier_bia_complete(bia: BIA) -> None:
+    champs_obligatoires = {
+        "responsable": bia.responsable,
+        "heures_fonctionnement": bia.heures_fonctionnement,
+        "sites_concernes": bia.sites_concernes,
+        "mtpd_heures": bia.mtpd_heures,
+        "rto_heures": bia.rto_heures,
+        "capacite_minimale_pct": bia.capacite_minimale_pct,
+    }
+
+    champs_manquants = [
+        nom
+        for nom, valeur in champs_obligatoires.items()
+        if valeur is None
+    ]
+
+    if champs_manquants:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=(
+                "La BIA est incomplète. "
+                f"Champs manquants : {', '.join(champs_manquants)}."
+            ),
+        )
+
+    if bia.rto_heures >= bia.mtpd_heures:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Le RTO doit être strictement inférieur à la MTPD.",
+        )
+
+
+
+
+
+
 def creer_bia(
     db: Session,
     data: BIACreate,
@@ -221,3 +257,73 @@ def lister_bias(
     requete = select(BIA).order_by(BIA.id)
 
     return list(db.scalars(requete))
+
+
+
+
+
+def soumettre_bia(
+    db: Session,
+    bia_id: int,
+) -> BIA:
+    bia = obtenir_bia(db, bia_id)
+
+    if bia.statut not in {"brouillon", "a_corriger"}:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=(
+                "Seule une BIA en brouillon ou à corriger "
+                "peut être soumise."
+            ),
+        )
+
+    _verifier_bia_complete(bia)
+
+    bia.statut = "soumis"
+
+    db.commit()
+    db.refresh(bia)
+
+    return bia
+
+
+def valider_bia(
+    db: Session,
+    bia_id: int,
+) -> BIA:
+    bia = obtenir_bia(db, bia_id)
+
+    if bia.statut != "soumis":
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Seule une BIA soumise peut être validée.",
+        )
+
+    _verifier_bia_complete(bia)
+
+    bia.statut = "valide"
+
+    db.commit()
+    db.refresh(bia)
+
+    return bia
+
+
+def demander_correction_bia(
+    db: Session,
+    bia_id: int,
+) -> BIA:
+    bia = obtenir_bia(db, bia_id)
+
+    if bia.statut != "soumis":
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Seule une BIA soumise peut être renvoyée en correction.",
+        )
+
+    bia.statut = "a_corriger"
+
+    db.commit()
+    db.refresh(bia)
+
+    return bia

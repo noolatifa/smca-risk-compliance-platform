@@ -60,3 +60,45 @@ def obtenir_bia(
 ):
     return service.obtenir_bia(db, bia_id)
 
+
+
+@router.post(
+    "/{bia_id}/soumettre",
+    response_model=BIARead,
+)
+def soumettre_bia(
+    bia_id: int,
+    db: Session = Depends(get_db),
+):
+    return service.soumettre_bia(
+        db=db,
+        bia_id=bia_id,
+    )
+
+
+@router.post(
+    "/{bia_id}/valider",
+    response_model=BIARead,
+)
+def valider_bia(
+    bia_id: int,
+    db: Session = Depends(get_db),
+):
+    return service.valider_bia(
+        db=db,
+        bia_id=bia_id,
+    )
+
+
+@router.post(
+    "/{bia_id}/a-corriger",
+    response_model=BIARead,
+)
+def demander_correction_bia(
+    bia_id: int,
+    db: Session = Depends(get_db),
+):
+    return service.demander_correction_bia(
+        db=db,
+        bia_id=bia_id,
+    )
