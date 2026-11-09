@@ -8,7 +8,7 @@ from backend.core.database import Base
 
 # Importer ici le models.py de chaque module qui a des tables :
 from backend.referentiel import models  # noqa: F401
-
+from backend.bia import models as bia_models
 
 config = context.config
 
