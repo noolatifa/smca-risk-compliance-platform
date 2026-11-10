@@ -44,3 +44,58 @@ def exporter_traitements(
             )
         },
     )
+    
+    
+    
+    
+    
+@router.get("/risques.pdf")
+def exporter_risques_pdf(
+    db: Session = Depends(get_db),
+):
+    contenu = service.exporter_risques_pdf(db)
+
+    return StreamingResponse(
+        iter([contenu]),
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": (
+                "attachment; filename=risques.pdf"
+            )
+        },
+    )
+
+
+@router.get("/traitements.pdf")
+def exporter_traitements_pdf(
+    db: Session = Depends(get_db),
+):
+    contenu = service.exporter_traitements_pdf(db)
+
+    return StreamingResponse(
+        iter([contenu]),
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": (
+                "attachment; filename=traitements.pdf"
+            )
+        },
+    )
+    
+    
+    
+@router.get("/dashboard.pdf")
+def exporter_dashboard_pdf(
+    db: Session = Depends(get_db),
+):
+    contenu = service.exporter_dashboard_pdf(db)
+
+    return StreamingResponse(
+        iter([contenu]),
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": (
+                "attachment; filename=dashboard.pdf"
+            )
+        },
+    )

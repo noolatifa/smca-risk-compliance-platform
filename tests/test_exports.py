@@ -172,3 +172,106 @@ def test_export_traitements_csv(client):
     assert "Échéance" in contenu
     assert "Mettre en place une sauvegarde" in contenu
     assert "Responsable informatique" in contenu
+    
+    
+    
+    
+    
+def test_export_risques_pdf(client):
+    activite = creer_activite(
+        client,
+        "Paiement en ligne",
+    )
+
+    response = creer_risque(
+        client,
+        activite["id"],
+    )
+
+    assert response.status_code == 201
+
+    risque = response.json()
+
+    valider_risque(
+        client,
+        risque["id"],
+    )
+
+    response = client.get(
+        f"{API}/exports/risques.pdf"
+    )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == (
+        "application/pdf"
+    )
+    assert "attachment" in response.headers[
+        "content-disposition"
+    ]
+    assert response.content.startswith(b"%PDF")
+
+
+def test_export_traitements_pdf(client):
+    activite = creer_activite(
+        client,
+        "Catalogue produits",
+    )
+
+    response = creer_risque(
+        client,
+        activite["id"],
+    )
+
+    assert response.status_code == 201
+
+    risque = response.json()
+
+    valider_risque(
+        client,
+        risque["id"],
+    )
+
+    response = client.post(
+        f"{API}/traitements",
+        json={
+            "risque_id": risque["id"],
+            "mesure": "Mettre en place une sauvegarde",
+            "responsable": "Responsable informatique",
+            "echeance": "2030-12-31",
+            "statut": "planifie",
+            "description": "Sauvegarde automatique.",
+            "commentaire": "Mesure prioritaire.",
+        },
+    )
+
+    assert response.status_code == 201
+
+    response = client.get(
+        f"{API}/exports/traitements.pdf"
+    )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == (
+        "application/pdf"
+    )
+    assert "attachment" in response.headers[
+        "content-disposition"
+    ]
+    assert response.content.startswith(b"%PDF")
+    
+    
+    
+    
+def test_export_dashboard_pdf(client):
+    response = client.get(
+        f"{API}/exports/dashboard.pdf"
+    )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == (
+        "application/pdf"
+    )
+    assert "attachment" in response.headers[
+        "content-disposition"
+    ]
+    assert response.content.startswith(b"%PDF")
