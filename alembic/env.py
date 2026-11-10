@@ -11,7 +11,8 @@ from backend.referentiel import models  # noqa: F401
 from backend.bia import models as bia_models
 from backend.risques import models as risques_models
 from backend.cartographie import models as cartographie_models
-
+from backend.traitement import models as traitement_models
+from backend.dashboard import service as dashboard_service
 
 config = context.config
 
