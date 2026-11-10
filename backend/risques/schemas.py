@@ -32,8 +32,8 @@ class RisqueCreate(BaseModel):
     activite_ids: list[int] = Field(min_length=1)
     ressource_ids: list[int] = Field(default_factory=list)
 
-    probabilite: int = Field(ge=1, le=4)
-    impact: int = Field(ge=1, le=4)
+    probabilite: int = Field(ge=1, le=5)
+    impact: int = Field(ge=1, le=5)
 
     statut: StatutRisque = StatutRisque.BROUILLON
 
@@ -57,13 +57,13 @@ class RisqueUpdate(BaseModel):
     probabilite: int | None = Field(
         default=None,
         ge=1,
-        le=4,
+        le=5,
     )
 
     impact: int | None = Field(
         default=None,
         ge=1,
-        le=4,
+        le=5,
     )
 
 

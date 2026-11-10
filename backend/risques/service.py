@@ -8,10 +8,10 @@ from backend.risques.schemas import RisqueCreate, RisqueUpdate
 
 
 def calculer_niveau(score: int) -> str:
-    if score <= 3:
+    if score <= 7:
         return "faible"
 
-    if score <= 8:
+    if score <= 14:
         return "modere"
 
     return "eleve"
@@ -106,6 +106,11 @@ def creer_risque(
     db: Session,
     data: RisqueCreate,
 ) -> dict:
+    if data.statut.value == "valide":
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Un risque ne peut pas être créé directement avec le statut valide.",
+        )
     activites = _obtenir_activites(
         db,
         data.activite_ids,
@@ -166,6 +171,7 @@ def obtenir_risque(
     return _serialiser(risque)
 
 
+
 def modifier_risque(
     db: Session,
     risque_id: int,
@@ -175,6 +181,11 @@ def modifier_risque(
         db,
         risque_id,
     )
+    if risque.statut == "valide":
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Un risque validé ne peut plus être modifié.",
+        )
 
     valeurs = data.model_dump(
         exclude_unset=True,

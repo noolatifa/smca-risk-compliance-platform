@@ -1,8 +1,8 @@
 """add risks module
 
-Revision ID: 509d36dbac1c
+Revision ID: c432a549c11c
 Revises: 623ec07fc46b
-Create Date: 2026-11-09 13:55:49.551869
+Create Date: 2026-11-10 14:33:06.536046
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '509d36dbac1c'
+revision: str = 'c432a549c11c'
 down_revision: Union[str, Sequence[str], None] = '623ec07fc46b'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -34,9 +34,9 @@ def upgrade() -> None:
     sa.Column('score_criticite', sa.Integer(), nullable=False),
     sa.Column('niveau', sa.String(length=20), nullable=False),
     sa.Column('statut', sa.String(length=20), nullable=False),
-    sa.CheckConstraint('impact BETWEEN 1 AND 4', name='ck_risque_impact'),
-    sa.CheckConstraint('probabilite BETWEEN 1 AND 4', name='ck_risque_probabilite'),
-    sa.CheckConstraint('score_criticite BETWEEN 1 AND 16', name='ck_risque_score'),
+    sa.CheckConstraint('impact BETWEEN 1 AND 5', name='ck_risque_impact'),
+    sa.CheckConstraint('probabilite BETWEEN 1 AND 5', name='ck_risque_probabilite'),
+    sa.CheckConstraint('score_criticite BETWEEN 1 AND 25', name='ck_risque_score'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('risque_activites',

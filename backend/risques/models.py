@@ -52,15 +52,15 @@ class Risque(Base):
 
     __table_args__ = (
         CheckConstraint(
-            "probabilite BETWEEN 1 AND 4",
+            "probabilite BETWEEN 1 AND 5",
             name="ck_risque_probabilite",
         ),
         CheckConstraint(
-            "impact BETWEEN 1 AND 4",
+            "impact BETWEEN 1 AND 5",
             name="ck_risque_impact",
         ),
         CheckConstraint(
-            "score_criticite BETWEEN 1 AND 16",
+            "score_criticite BETWEEN 1 AND 25",
             name="ck_risque_score",
         ),
     )
