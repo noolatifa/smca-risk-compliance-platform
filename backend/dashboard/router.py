@@ -5,7 +5,6 @@ from backend.core.database import get_db
 from backend.dashboard import service
 from backend.dashboard.schemas import DashboardRead
 
-
 router = APIRouter(
     prefix="/dashboard",
     tags=["Dashboard"],

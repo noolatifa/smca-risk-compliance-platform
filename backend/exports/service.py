@@ -2,10 +2,6 @@ import csv
 import io
 from datetime import date
 
-from sqlalchemy import select
-from sqlalchemy.orm import Session
-
-
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
@@ -17,11 +13,13 @@ from reportlab.platypus import (
     Table,
     TableStyle,
 )
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
-
+from backend.dashboard.service import obtenir_dashboard
 from backend.risques.models import Risque
 from backend.traitement.models import Traitement
-from backend.dashboard.service import obtenir_dashboard
+
 
 def exporter_risques_csv(db: Session) -> str:
     risques = db.scalars(

@@ -8,7 +8,6 @@ from backend.cartographie.schemas import (
 )
 from backend.core.database import get_db
 
-
 router = APIRouter(
     prefix="/cartographie",
     tags=["Cartographie"],

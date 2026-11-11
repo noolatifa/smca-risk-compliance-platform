@@ -38,16 +38,18 @@ class TraitementCreate(BaseModel):
 
     date_realisation: date | None = None
 
-    @model_validator(mode="after")
-    def verifier_realisation(self):
-        if self.statut == StatutTraitement.TERMINE:
-            if self.date_realisation is None:
-                raise ValueError(
-                    "La date de réalisation est obligatoire "
-                    "pour un traitement terminé."
-                )
+@model_validator(mode="after")
+def verifier_realisation(self):
+    if (
+        self.statut == StatutTraitement.TERMINE
+        and self.date_realisation is None
+    ):
+        raise ValueError(
+            "La date de réalisation est obligatoire "
+            "pour un traitement terminé."
+        )
 
-        return self
+    return self
 
 
 class TraitementUpdate(BaseModel):

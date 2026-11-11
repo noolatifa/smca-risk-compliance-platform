@@ -149,10 +149,10 @@ def modifier_traitement(
         exclude_unset=True,
     )
 
-    echeance = valeurs.get(
-        "echeance",
-        traitement.echeance,
-    )
+    # echeance = valeurs.get(
+    #     "echeance",
+    #     traitement.echeance,
+    # )
 
     statut = valeurs.get(
         "statut",

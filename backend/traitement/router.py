@@ -10,7 +10,6 @@ from backend.traitement.schemas import (
     TraitementUpdate,
 )
 
-
 router = APIRouter(
     prefix="/traitements",
     tags=["Traitements"],

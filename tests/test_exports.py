@@ -1,6 +1,5 @@
 from datetime import date, timedelta
 
-
 API = "/api/v1"
 
 

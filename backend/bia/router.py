@@ -5,7 +5,6 @@ from backend.bia import service
 from backend.bia.schemas import BIACreate, BIARead, BIAUpdate
 from backend.core.database import get_db
 
-
 router = APIRouter(
     prefix="/bia",
     tags=["BIA"],

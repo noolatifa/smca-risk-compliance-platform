@@ -12,7 +12,6 @@ from backend.referentiel.schemas import (
     RessourceRead,
 )
 
-
 router = APIRouter()
 
 activites = APIRouter(prefix="/activites", tags=["Activités"])

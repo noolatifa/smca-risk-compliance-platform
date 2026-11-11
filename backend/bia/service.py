@@ -3,8 +3,8 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from backend.bia.models import BIA, BIAImpact
+from backend.bia.schemas import BIACreate, BIAUpdate, StatutBIA
 from backend.referentiel.models import Activite
-from backend.bia.schemas import BIAUpdate, BIACreate, StatutBIA
 
 HORIZONS_AUTORISES = {1, 4, 8, 24, 72}
 

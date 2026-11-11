@@ -9,7 +9,6 @@ from backend.risques.schemas import (
     RisqueUpdate,
 )
 
-
 router = APIRouter(
     prefix="/risques",
     tags=["Risques"],
