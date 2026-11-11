@@ -9,7 +9,6 @@ from backend.referentiel.schemas import (
     RessourceCreate,
 )
 
-
 # --- Outils communs (évitent de dupliquer le code Activité / Ressource) ------
 
 def _obtenir(db: Session, modele, identifiant: int, libelle: str):

@@ -4,11 +4,11 @@ import tempfile
 # Base de test isolée : à définir AVANT d'importer l'application.
 os.environ["DATABASE_URL"] = f"sqlite:///{tempfile.mkdtemp()}/test.db"
 
-import pytest  # noqa: E402
-from fastapi.testclient import TestClient  # noqa: E402
+import pytest
+from fastapi.testclient import TestClient
 
-from backend.core.database import Base, engine  # noqa: E402
-from backend.main import app  # noqa: E402
+from backend.core.database import Base, engine
+from backend.main import app
 
 
 @pytest.fixture(autouse=True)

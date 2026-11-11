@@ -6,7 +6,6 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 from backend.core.config import settings
 
-
 url = make_url(settings.database_url)
 est_sqlite = url.get_backend_name() == "sqlite"
 
