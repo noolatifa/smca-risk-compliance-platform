@@ -17,6 +17,9 @@ import { obtenirDashboard } from "./services/dashboardService";
 import ReferentielPage from "./features/processus/pages/referentielPage";
 import BiaPage from "./features/bia/pages/BiaPage";
 import RisquesPage from "./features/risques/pages/RisquesPage";
+import TraitementsPage from "./features/traitement/pages/TraitementsPage";
+
+
 
 import "./App.css";
 
@@ -84,7 +87,10 @@ function Sidebar({ page, setPage }) {
           Cartographie
         </button>
 
-        <button type="button" className="nav-link">
+        <button
+          className={page === "traitements" ? "nav-link active" : "nav-link"}
+          onClick={() => setPage("traitements")}
+        >
           <span>✓</span>
           Traitements
         </button>
@@ -387,12 +393,14 @@ function App() {
       <Sidebar page={page} setPage={setPage} />
 
       <main className="main-content">
-      {page === "referentiel" ? (
-          <ReferentielPage />
-        ) : page === "bia" ? (
-          <BiaPage />
+        {page === "traitements" ? (
+          <TraitementsPage />
         ) : page === "risques" ? (
           <RisquesPage />
+        ) : page === "bia" ? (
+          <BiaPage />
+        ) : page === "referentiel" ? (
+          <ReferentielPage />
         ) : loading ? (
           <div className="center-page">
             <p>Chargement du dashboard...</p>
