@@ -15,6 +15,9 @@ import {
 
 import { obtenirDashboard } from "./services/dashboardService";
 import ReferentielPage from "./features/processus/pages/referentielPage";
+import BiaPage from "./features/bia/pages/BiaPage";
+import RisquesPage from "./features/risques/pages/RisquesPage";
+
 import "./App.css";
 
 const COLORS = {
@@ -58,12 +61,20 @@ function Sidebar({ page, setPage }) {
           Référentiel
         </button>
 
-        <button type="button" className="nav-link">
+        <button
+          type="button"
+          className={`nav-link ${page === "bia" ? "active" : ""}`}
+          onClick={() => setPage("bia")}
+        >
           <span>◉</span>
           BIA
         </button>
 
-        <button type="button" className="nav-link">
+        <button
+          type="button"
+          className={`nav-link ${page === "risques" ? "active" : ""}`}
+          onClick={() => setPage("risques")}
+        >
           <span>⚠</span>
           Risques
         </button>
@@ -376,8 +387,12 @@ function App() {
       <Sidebar page={page} setPage={setPage} />
 
       <main className="main-content">
-        {page === "referentiel" ? (
+      {page === "referentiel" ? (
           <ReferentielPage />
+        ) : page === "bia" ? (
+          <BiaPage />
+        ) : page === "risques" ? (
+          <RisquesPage />
         ) : loading ? (
           <div className="center-page">
             <p>Chargement du dashboard...</p>
