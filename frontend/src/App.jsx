@@ -18,7 +18,8 @@ import ReferentielPage from "./features/processus/pages/referentielPage";
 import BiaPage from "./features/bia/pages/BiaPage";
 import RisquesPage from "./features/risques/pages/RisquesPage";
 import TraitementsPage from "./features/traitement/pages/TraitementsPage";
-
+import CartographiePage from "./features/cartographie/pages/CartographiePage";
+import ExportsPage from "./features/exports/pages/ExportsPage";
 
 
 import "./App.css";
@@ -82,7 +83,10 @@ function Sidebar({ page, setPage }) {
           Risques
         </button>
 
-        <button type="button" className="nav-link">
+        <button
+          className={page === "cartographie" ? "nav-link active" : "nav-link"}
+          onClick={() => setPage("cartographie")}
+        >
           <span>▦</span>
           Cartographie
         </button>
@@ -95,10 +99,14 @@ function Sidebar({ page, setPage }) {
           Traitements
         </button>
 
-        <button type="button" className="nav-link">
+        <button
+          className={page === "exports" ? "nav-link active" : "nav-link"}
+          onClick={() => setPage("exports")}
+        >
           <span>⇩</span>
           Exports
         </button>
+
       </nav>
 
       <div className="api-status">
@@ -392,36 +400,40 @@ function App() {
     <div className="app-layout">
       <Sidebar page={page} setPage={setPage} />
 
-      <main className="main-content">
-        {page === "traitements" ? (
-          <TraitementsPage />
-        ) : page === "risques" ? (
-          <RisquesPage />
-        ) : page === "bia" ? (
-          <BiaPage />
-        ) : page === "referentiel" ? (
-          <ReferentielPage />
-        ) : loading ? (
-          <div className="center-page">
-            <p>Chargement du dashboard...</p>
-          </div>
-        ) : error ? (
-          <div className="center-page error-page">
-            <h2>Erreur de chargement</h2>
-            <p>{error}</p>
-            <p>
-              Vérifie que FastAPI fonctionne sur :
-              <br />
-              <code>http://127.0.0.1:8000</code>
-            </p>
-          </div>
-        ) : (
-          <DashboardPage
-            dashboard={dashboard}
-            onRefresh={chargerDashboard}
-          />
-        )}
-      </main>
+    <main className="main-content">
+      {page === "cartographie" ? (
+        <CartographiePage />
+      ) : page === "exports" ? (
+        <ExportsPage />
+      ) : page === "traitements" ? (
+        <TraitementsPage />
+      ) : page === "risques" ? (
+        <RisquesPage />
+      ) : page === "bia" ? (
+        <BiaPage />
+      ) : page === "referentiel" ? (
+        <ReferentielPage />
+      ) : loading ? (
+        <div className="center-page">
+          <p>Chargement du dashboard...</p>
+        </div>
+      ) : error ? (
+        <div className="center-page error-page">
+          <h2>Erreur de chargement</h2>
+          <p>{error}</p>
+          <p>
+            Vérifie que FastAPI fonctionne sur :
+            <br />
+            <code>http://127.0.0.1:8000</code>
+          </p>
+        </div>
+      ) : (
+        <DashboardPage
+          dashboard={dashboard}
+          onRefresh={chargerDashboard}
+        />
+      )}
+    </main>
     </div>
   );
 }

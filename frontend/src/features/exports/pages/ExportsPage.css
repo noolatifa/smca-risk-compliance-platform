@@ -1,0 +1,101 @@
+.exports-page {
+  width: 100%;
+}
+
+.exports-list {
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.export-card {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--white);
+  box-shadow: 0 10px 26px rgb(41 97 114 / 7%);
+}
+
+.export-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 13px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.export-information {
+  flex: 1;
+}
+
+.export-information h3 {
+  margin: 0 0 5px;
+  color: var(--dark);
+  font-size: 16px;
+}
+
+.export-information p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.export-button {
+  padding: 10px 15px;
+  border: 0;
+  border-radius: 9px;
+  background: #eaf6f8;
+  color: var(--primary-deep);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.export-button:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.export-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.exports-error,
+.exports-success {
+  max-width: 900px;
+  margin-bottom: 20px;
+  padding: 13px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.exports-error {
+  background: #fff0f0;
+  color: #a93232;
+}
+
+.exports-success {
+  background: #e9f8f2;
+  color: #287b69;
+}
+
+@media (max-width: 600px) {
+  .export-card {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .export-button {
+    width: 100%;
+  }
+}
