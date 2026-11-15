@@ -481,3 +481,12 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+.nav-link {
+  width: 100%;
+  border: 1px solid transparent;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
