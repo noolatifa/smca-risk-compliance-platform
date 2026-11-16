@@ -2,13 +2,19 @@ import useCartographie from "../hooks/useCartographie";
 import "./CartographiePage.css";
 
 function niveauDepuisScore(score) {
-  if (score <= 7) return "faible";
-  if (score <= 14) return "modere";
+  if (score <= 7) {
+    return "faible";
+  }
+
+  if (score <= 14) {
+    return "modere";
+  }
+
   return "eleve";
 }
 
-function classeCellule(probabilite, impact) {
-  return `niveau-${niveauDepuisScore(probabilite * impact)}`;
+function classeCellule(score) {
+  return `niveau-${niveauDepuisScore(score)}`;
 }
 
 export default function CartographiePage() {
@@ -21,18 +27,42 @@ export default function CartographiePage() {
   } = useCartographie();
 
   if (chargement) {
-    return <div className="center-page">Chargement de la cartographie...</div>;
+    return (
+      <div className="center-page">
+        Chargement de la cartographie...
+      </div>
+    );
   }
 
-  const cellules = heatmap?.cellules || heatmap?.grille || [];
+  const matrice = heatmap?.matrice || [];
 
   function obtenirCellule(probabilite, impact) {
-    return cellules.find(
+    return matrice.find(
       (cellule) =>
         cellule.probabilite === probabilite &&
         cellule.impact === impact,
     );
   }
+
+  const totalRisques =
+    statistiques?.total_risques ??
+    heatmap?.total_risques ??
+    0;
+
+  const risquesFaibles =
+    statistiques?.risques_faibles ??
+    heatmap?.risques_faibles ??
+    0;
+
+  const risquesModeres =
+    statistiques?.risques_moderees ??
+    heatmap?.risques_moderees ??
+    0;
+
+  const risquesEleves =
+    statistiques?.risques_eleves ??
+    heatmap?.risques_eleves ??
+    0;
 
   return (
     <section className="cartographie-page">
@@ -50,7 +80,11 @@ export default function CartographiePage() {
         </button>
       </header>
 
-      {erreur && <div className="cartographie-error">{erreur}</div>}
+      {erreur && (
+        <div className="cartographie-error">
+          {erreur}
+        </div>
+      )}
 
       <div className="cartographie-grid">
         <section className="panel heatmap-panel">
@@ -60,28 +94,39 @@ export default function CartographiePage() {
           </div>
 
           <div className="heatmap-wrapper">
-            <div className="heatmap-y-label">Probabilité</div>
+            <div className="heatmap-y-label">
+              Probabilité
+            </div>
 
             <div className="heatmap-content">
               <div className="heatmap">
                 {[5, 4, 3, 2, 1].map((probabilite) => (
-                  <div className="heatmap-row" key={probabilite}>
-                    <span className="axis-number">{probabilite}</span>
+                  <div
+                    className="heatmap-row"
+                    key={probabilite}
+                  >
+                    <span className="axis-number">
+                      {probabilite}
+                    </span>
 
                     {[1, 2, 3, 4, 5].map((impact) => {
-                      const cellule = obtenirCellule(probabilite, impact);
-                      const nombre = cellule?.nombre ?? cellule?.count ?? 0;
+                      const cellule = obtenirCellule(
+                        probabilite,
+                        impact,
+                      );
+
+                      const score = probabilite * impact;
+                      const nombre = cellule?.nombre_risques ?? 0;
 
                       return (
                         <div
                           className={`heatmap-cell ${classeCellule(
-                            probabilite,
-                            impact,
+                            score,
                           )}`}
                           key={`${probabilite}-${impact}`}
                           title={`${nombre} risque(s)`}
                         >
-                          <strong>{probabilite * impact}</strong>
+                          <strong>{score}</strong>
                           <span>{nombre}</span>
                         </div>
                       );
@@ -91,27 +136,38 @@ export default function CartographiePage() {
 
                 <div className="heatmap-x-axis">
                   <span />
+
                   {[1, 2, 3, 4, 5].map((impact) => (
-                    <span className="axis-number" key={impact}>
+                    <span
+                      className="axis-number"
+                      key={impact}
+                    >
                       {impact}
                     </span>
                   ))}
                 </div>
               </div>
 
-              <div className="heatmap-x-label">Impact</div>
+              <div className="heatmap-x-label">
+                Impact
+              </div>
             </div>
           </div>
 
           <div className="heatmap-legend">
             <span>
-              <i className="legend-low" /> Faible
+              <i className="legend-low" />
+              Faible
             </span>
+
             <span>
-              <i className="legend-medium" /> Modéré
+              <i className="legend-medium" />
+              Modéré
             </span>
+
             <span>
-              <i className="legend-high" /> Élevé
+              <i className="legend-high" />
+              Élevé
             </span>
           </div>
         </section>
@@ -124,39 +180,23 @@ export default function CartographiePage() {
 
           <div className="cartographie-statistics">
             <div className="cartographie-stat">
-              <span>Total des risques validés</span>
-              <strong>
-                {statistiques?.total_risques_valides ??
-                  statistiques?.total_risques ??
-                  0}
-              </strong>
+              <span>Risques validés</span>
+              <strong>{totalRisques}</strong>
             </div>
 
             <div className="cartographie-stat low">
               <span>Risques faibles</span>
-              <strong>
-                {statistiques?.risques_faibles ??
-                  statistiques?.faibles ??
-                  0}
-              </strong>
+              <strong>{risquesFaibles}</strong>
             </div>
 
             <div className="cartographie-stat medium">
               <span>Risques modérés</span>
-              <strong>
-                {statistiques?.risques_moderes ??
-                  statistiques?.moderes ??
-                  0}
-              </strong>
+              <strong>{risquesModeres}</strong>
             </div>
 
             <div className="cartographie-stat high">
               <span>Risques élevés</span>
-              <strong>
-                {statistiques?.risques_eleves ??
-                  statistiques?.eleves ??
-                  0}
-              </strong>
+              <strong>{risquesEleves}</strong>
             </div>
           </div>
         </section>

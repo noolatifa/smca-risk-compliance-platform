@@ -18,7 +18,9 @@ export async function listerTraitements() {
 export async function creerTraitement(donnees) {
   const response = await fetch(`${API_URL}/traitements`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(donnees),
   });
 
@@ -28,7 +30,9 @@ export async function creerTraitement(donnees) {
 export async function modifierTraitement(id, donnees) {
   const response = await fetch(`${API_URL}/traitements/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(donnees),
   });
 
@@ -40,16 +44,26 @@ export async function supprimerTraitement(id) {
     method: "DELETE",
   });
 
+  if (response.status === 204) {
+    return null;
+  }
+
   return traiterReponse(response);
 }
 
 export async function listerTraitementsEnRetard() {
-  const response = await fetch(`${API_URL}/traitements/en-retard`);
+  const response = await fetch(
+    `${API_URL}/traitements?uniquement_en_retard=true`,
+  );
+
   return traiterReponse(response);
 }
 
 export async function obtenirDashboardTraitements() {
-  const response = await fetch(`${API_URL}/traitements/dashboard`);
+  const response = await fetch(
+    `${API_URL}/traitements/dashboard`,
+  );
+
   return traiterReponse(response);
 }
 

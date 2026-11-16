@@ -11,7 +11,7 @@ import {
   listerRessources,
 } from "../services/referentielService";
 
-import "./ReferentielPage.css";
+import "./referentielPage.css";
 
 function ReferentielPage() {
   const [onglet, setOnglet] = useState("activites");
