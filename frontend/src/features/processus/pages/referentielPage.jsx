@@ -1,4 +1,10 @@
-import { useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+
+
 
 import {
   archiverActivite,
@@ -42,17 +48,20 @@ function ReferentielPage() {
     type_dependance: "utilise",
   });
 
-  async function chargerDonnees() {
+  const chargerDonnees = useCallback(async () => {
     try {
       setChargement(true);
       setErreur("");
 
-      const [activitesData, ressourcesData, dependancesData] =
-        await Promise.all([
-          listerActivites(inclureArchives),
-          listerRessources(inclureArchives),
-          listerDependances(),
-        ]);
+      const [
+        activitesData,
+        ressourcesData,
+        dependancesData,
+      ] = await Promise.all([
+        listerActivites(inclureArchives),
+        listerRessources(inclureArchives),
+        listerDependances(),
+      ]);
 
       setActivites(activitesData);
       setRessources(ressourcesData);
@@ -62,11 +71,11 @@ function ReferentielPage() {
     } finally {
       setChargement(false);
     }
-  }
+  }, [inclureArchives]);
 
   useEffect(() => {
     chargerDonnees();
-  }, [inclureArchives]);
+  }, [chargerDonnees]);
 
   function modifierActiviteForm(event) {
     const { name, value } = event.target;
