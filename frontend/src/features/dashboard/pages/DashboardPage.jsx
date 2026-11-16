@@ -57,7 +57,11 @@ export default function DashboardPage({
           item.nom ||
           item.label ||
           "Activité",
-        total: item.total || item.nombre || 0,
+        total:
+          item.total ||
+          item.nombre ||
+          item.nombre_risques ||
+          0,
       }))
     : Object.entries(risquesParActivite).map(
         ([nom, total]) => ({
@@ -178,44 +182,72 @@ export default function DashboardPage({
               <p>Aucune activité concernée.</p>
             </div>
           ) : (
-            <div className="chart-container">
+            <div className="chart-container activity-chart-container">
               <ResponsiveContainer
                 width="100%"
-                height={260}
+                height={320}
               >
                 <BarChart
                   data={activites}
                   layout="vertical"
                   margin={{
                     top: 10,
-                    right: 20,
-                    left: 20,
+                    right: 25,
+                    left: 10,
                     bottom: 10,
                   }}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
                     horizontal={false}
+                    stroke="#dbe7eb"
                   />
 
                   <XAxis
                     type="number"
                     allowDecimals={false}
+                    tick={{
+                      fill: "#6f8490",
+                      fontSize: 12,
+                    }}
+                    axisLine={{
+                      stroke: "#9eb4bd",
+                    }}
                   />
 
                   <YAxis
                     dataKey="nom"
                     type="category"
-                    width={120}
+                    width={180}
+                    interval={0}
+                    tick={{
+                      fill: "#405765",
+                      fontSize: 11,
+                    }}
+                    tickFormatter={(value) =>
+                      value.length > 24
+                        ? value.slice(0, 24) + "..."
+                        : value
+                    }
+                    tickLine={false}
                   />
 
-                  <Tooltip />
+                  <Tooltip
+                    formatter={(value) => [
+                      `${value} risque${value > 1 ? "s" : ""}`,
+                      "Total",
+                    ]}
+                    labelFormatter={(_, payload) =>
+                      payload?.[0]?.payload?.nom || ""
+                    }
+                  />
 
                   <Bar
                     dataKey="total"
                     name="Risques"
                     fill="#39b2cd"
-                    radius={[0, 6, 6, 0]}
+                    radius={[0, 8, 8, 0]}
+                    barSize={22}
                   />
                 </BarChart>
               </ResponsiveContainer>
@@ -257,7 +289,7 @@ export default function DashboardPage({
                   <div
                     className={`risk-score ${risque.niveau}`}
                   >
-                    {risque.score_criticite}
+                    {risque.score}
                   </div>
                 </div>
               ))}

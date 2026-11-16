@@ -45,7 +45,9 @@ function ReferentielPage() {
   const [dependanceForm, setDependanceForm] = useState({
     activite_id: "",
     ressource_id: "",
-    type_dependance: "utilise",
+    criticite: 3,
+    indispensable: true,
+    alternative: "",
   });
 
   const chargerDonnees = useCallback(async () => {
@@ -157,13 +159,17 @@ function ReferentielPage() {
       await creerDependance({
         activite_id: Number(dependanceForm.activite_id),
         ressource_id: Number(dependanceForm.ressource_id),
-        type_dependance: dependanceForm.type_dependance,
+        criticite: Number(dependanceForm.criticite),
+        indispensable: dependanceForm.indispensable,
+        alternative: dependanceForm.alternative || null,
       });
 
       setDependanceForm({
         activite_id: "",
         ressource_id: "",
-        type_dependance: "utilise",
+        criticite: 3,
+        indispensable: true,
+        alternative: "",
       });
 
       setMessage("Dépendance créée avec succès.");
@@ -551,17 +557,27 @@ function ReferentielPage() {
               </label>
 
               <label>
-                Type de dépendance
+                Criticité
                 <select
-                  name="type_dependance"
-                  value={dependanceForm.type_dependance}
+                  name="criticite"
+                  value={dependanceForm.criticite}
                   onChange={modifierDependanceForm}
                 >
-                  <option value="utilise">Utilise</option>
-                  <option value="heberge">Héberge</option>
-                  <option value="depend_de">Dépend de</option>
-                  <option value="supporte">Supporte</option>
+                  <option value="1">1 — Faible</option>
+                  <option value="2">2 — Modérée</option>
+                  <option value="3">3 — Importante</option>
+                  <option value="4">4 — Critique</option>
                 </select>
+              </label>
+
+              <label>
+                Alternative
+                <textarea
+                  name="alternative"
+                  value={dependanceForm.alternative}
+                  onChange={modifierDependanceForm}
+                  placeholder="Solution de secours éventuelle..."
+                />
               </label>
 
               <button className="primary-button" type="submit">
@@ -605,9 +621,8 @@ function ReferentielPage() {
                             `Ressource #${dependance.ressource_id}`}
                         </td>
                         <td>
-                          <span className="type-badge">
-                            {dependance.type_dependance}
-                          </span>
+                          Criticité {dependance.criticite}/4
+                          {dependance.indispensable && " · Indispensable"}
                         </td>
                       </tr>
                     ))}

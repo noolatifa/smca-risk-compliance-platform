@@ -1,0 +1,311 @@
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+
+import MetricCard from "../components/MetricCard";
+
+const COLORS = {
+  faible: "#67c5b3",
+  modere: "#e6a23c",
+  eleve: "#d95c5c",
+};
+
+export default function DashboardPage({
+  dashboard,
+  onRefresh,
+}) {
+  const indicateurs = dashboard?.indicateurs || {};
+  const repartition =
+    dashboard?.repartition_niveaux || {};
+  const risquesParActivite =
+    dashboard?.risques_par_activite || [];
+  const topRisques = dashboard?.top_risques || [];
+  const suivi = dashboard?.suivi_traitements || {};
+
+  const niveaux = [
+    {
+      name: "Faible",
+      value: repartition.faible || 0,
+      key: "faible",
+    },
+    {
+      name: "Modéré",
+      value: repartition.modere || 0,
+      key: "modere",
+    },
+    {
+      name: "Élevé",
+      value: repartition.eleve || 0,
+      key: "eleve",
+    },
+  ];
+
+  const activites = Array.isArray(risquesParActivite)
+    ? risquesParActivite.map((item) => ({
+        nom:
+          item.activite ||
+          item.nom ||
+          item.label ||
+          "Activité",
+        total:
+          item.total ||
+          item.nombre ||
+          item.nombre_risques ||
+          0,
+      }))
+    : Object.entries(risquesParActivite).map(
+        ([nom, total]) => ({
+          nom,
+          total,
+        }),
+      );
+
+  return (
+    <>
+      <header className="page-header">
+        <div>
+          <p className="eyebrow">VUE GÉNÉRALE</p>
+          <h2>Tableau de bord</h2>
+          <p className="page-subtitle">
+            Synthèse des risques et des plans de traitement.
+          </p>
+        </div>
+
+        <button
+          className="refresh-button"
+          onClick={onRefresh}
+        >
+          Actualiser
+        </button>
+      </header>
+
+      <section className="metrics-grid">
+        <MetricCard
+          label="Risques totaux"
+          value={indicateurs.total_risques}
+          color="blue"
+        />
+
+        <MetricCard
+          label="Risques élevés"
+          value={indicateurs.risques_eleves}
+          color="red"
+        />
+
+        <MetricCard
+          label="Risques modérés"
+          value={indicateurs.risques_moderees}
+          color="orange"
+        />
+
+        <MetricCard
+          label="Risques faibles"
+          value={indicateurs.risques_faibles}
+          color="green"
+        />
+
+        <MetricCard
+          label="Mesures en retard"
+          value={indicateurs.mesures_en_retard}
+          color="purple"
+        />
+      </section>
+
+      <section className="dashboard-grid">
+        <article className="panel">
+          <div className="panel-header">
+            <p className="panel-kicker">
+              ANALYSE DES RISQUES
+            </p>
+            <h3>Répartition par niveau</h3>
+          </div>
+
+          {indicateurs.total_risques === 0 ? (
+            <div className="empty-state">
+              <span>○</span>
+              <p>Aucun risque enregistré.</p>
+            </div>
+          ) : (
+            <div className="chart-container">
+              <ResponsiveContainer
+                width="100%"
+                height={260}
+              >
+                <PieChart>
+                  <Pie
+                    data={niveaux}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={65}
+                    outerRadius={95}
+                    paddingAngle={4}
+                  >
+                    {niveaux.map((niveau) => (
+                      <Cell
+                        key={niveau.key}
+                        fill={COLORS[niveau.key]}
+                      />
+                    ))}
+                  </Pie>
+
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </article>
+
+        <article className="panel">
+          <div className="panel-header">
+            <p className="panel-kicker">
+              CARTOGRAPHIE
+            </p>
+            <h3>Risques par activité</h3>
+          </div>
+
+          {activites.length === 0 ? (
+            <div className="empty-state">
+              <span>○</span>
+              <p>Aucune activité concernée.</p>
+            </div>
+          ) : (
+            <div className="chart-container">
+              <ResponsiveContainer
+                width="100%"
+                height={260}
+              >
+                <BarChart
+                  data={activites}
+                  layout="vertical"
+                  margin={{
+                    top: 10,
+                    right: 20,
+                    left: 20,
+                    bottom: 10,
+                  }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    horizontal={false}
+                  />
+
+                  <XAxis
+                    type="number"
+                    allowDecimals={false}
+                  />
+
+                  <YAxis
+                    dataKey="nom"
+                    type="category"
+                    width={120}
+                  />
+
+                  <Tooltip />
+
+                  <Bar
+                    dataKey="total"
+                    name="Risques"
+                    fill="#39b2cd"
+                    radius={[0, 6, 6, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </article>
+      </section>
+
+      <section className="dashboard-grid">
+        <article className="panel">
+          <div className="panel-header">
+            <p className="panel-kicker">
+              PRIORISATION
+            </p>
+            <h3>Top 3 des risques</h3>
+          </div>
+
+          {topRisques.length === 0 ? (
+            <div className="empty-state">
+              <span>○</span>
+              <p>Aucun risque prioritaire.</p>
+            </div>
+          ) : (
+            <div className="risk-list">
+              {topRisques.slice(0, 3).map((risque) => (
+                <div
+                  className="risk-row"
+                  key={risque.id}
+                >
+                  <div className="risk-id">
+                    R{risque.id}
+                  </div>
+
+                  <div className="risk-information">
+                    <strong>{risque.scenario}</strong>
+                    <span>{risque.proprietaire}</span>
+                  </div>
+
+                  <div
+                    className={`risk-score ${risque.niveau}`}
+                  >
+                    {risque.score_criticite}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </article>
+
+        <article className="panel">
+          <div className="panel-header">
+            <p className="panel-kicker">
+              PLAN DE TRAITEMENT
+            </p>
+            <h3>Suivi des mesures</h3>
+          </div>
+
+          <div className="treatment-list">
+            <div className="treatment-row">
+              <span className="treatment-dot gray"></span>
+              <span>Planifiées</span>
+              <strong>{suivi.planifies || 0}</strong>
+            </div>
+
+            <div className="treatment-row">
+              <span className="treatment-dot blue"></span>
+              <span>En cours</span>
+              <strong>{suivi.en_cours || 0}</strong>
+            </div>
+
+            <div className="treatment-row">
+              <span className="treatment-dot green"></span>
+              <span>Terminées</span>
+              <strong>{suivi.termines || 0}</strong>
+            </div>
+
+            <div className="treatment-row">
+              <span className="treatment-dot red"></span>
+              <span>En retard</span>
+              <strong className="danger">
+                {suivi.en_retard || 0}
+              </strong>
+            </div>
+          </div>
+        </article>
+      </section>
+    </>
+  );
+}
